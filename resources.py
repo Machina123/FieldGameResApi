@@ -54,27 +54,9 @@ class UserLogin(Resource):
             return {'message': 'Wrong credentials'}
 
 
-class UserLogoutAccess(Resource):
-    @jwt_required
-    def post(self):
-        print("Logout: access")
-        jti = get_raw_jwt()['jti']
-        print(jti)
-        try:
-            revoked_token = RevokedTokenModel(jti=jti)
-            revoked_token.add()
-            resp = jsonify({'message': 'Access token has been revoked'})
-            unset_jwt_cookies(resp)
-            return resp
-        except Exception as e:
-            print(e)
-            return {'message': 'Something went wrong'}, 500
-
-
-class UserLogoutRefresh(Resource):
+class UserLogout(Resource):
     @jwt_refresh_token_required
     def post(self):
-        print("Logout: refresh")
         jti = get_raw_jwt()['jti']
         try:
             revoked_token = RevokedTokenModel(jti=jti)
@@ -99,8 +81,8 @@ class TokenRefresh(Resource):
 
 class GameListResource(Resource):
     @jwt_required
-    def get(self):
-        return GameModel.return_all()
+    def get(self, game_id):
+        return GameModel.serialize([GameModel.find_by_id(game_id)])
 
 
 class RiddleListResource(Resource):
