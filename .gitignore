@@ -300,5 +300,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/macos,flask,python,windows,pycharm+all
-
-app.db
