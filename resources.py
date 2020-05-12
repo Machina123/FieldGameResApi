@@ -134,6 +134,4 @@ class GameStartResource(Resource):
                 game_id=game_id
             )
             game.save_to_db()
-            return ScoreboardEntryModel.serialize([game])
-        else:
-            return ScoreboardEntryModel.serialize([is_game_started])
+        return ScoreboardEntryModel.serialize(ScoreboardEntryModel.filter_by_user(username))
