@@ -19,6 +19,10 @@ class UserModel(db.Model):
         return cls.query.filter_by(username=username).first()
 
     @classmethod
+    def find_by_id(cls, uid):
+        return cls.query.filter_by(id=uid).first()
+
+    @classmethod
     def return_all(cls):
         def to_json(x):
             return {
@@ -165,7 +169,7 @@ class ScoreboardEntryModel(db.Model):
                 'id': x.id,
                 'user_id': x.user_id,
                 'game_id': x.game_id,
-                'finished:': x.finished,
+                'finished': x.finished,
                 'current_riddle': x.current_riddle,
                 'time_begin': str(x.time_begin),
                 'time_end': str(x.time_end)

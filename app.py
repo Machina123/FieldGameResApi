@@ -27,12 +27,14 @@ api.add_resource(resources.UserRegistration, '/register')
 api.add_resource(resources.UserLogin, '/login')
 api.add_resource(resources.UserLogout, '/logout')
 api.add_resource(resources.TokenRefresh, '/token/refresh')
-api.add_resource(resources.GameListResource, '/games/<int:game_id>')
+api.add_resource(resources.GameDetailsResource, '/games/<int:game_id>')
 api.add_resource(resources.RiddleListResource, '/games/<int:game_id>/riddles')
 api.add_resource(resources.UserGamesStatusResource, '/mygames')
 api.add_resource(resources.GameProgressResource, '/mygames/<int:game_id>')
 api.add_resource(resources.GameStartResource, '/mygames/<int:game_id>/start')
 api.add_resource(resources.GameAdvancementResource, '/mygames/<int:game_id>/advance')
+api.add_resource(resources.StatisticsResource, '/stats')
+api.add_resource(resources.AllGamesResource, '/games')
 
 
 @app.before_first_request

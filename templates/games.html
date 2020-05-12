@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Games{% endblock %}
+{% block modal %}
+    <div class="modal fade" id="gameDetailModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Join game</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid align-content-center">
+                        <div class="row">
+                            <div class="col-12">
+                                <span class="d-block text-center">To join this game, open FieldGame app and scan this QR code</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <img src="https://via.placeholder.com/400" alt="Game QR Code" id="gameQR">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>No. of Riddles</th>
+                    <th>Join</th>
+                </tr>
+                </thead>
+                <tbody id="game-details">
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            getGames();
+        }, false);
+    </script>
+{% endblock %}

@@ -2,5 +2,13 @@
 
 {% block title %}Start{% endblock %}
 {% block content %}
-    <h1 class="text-center px-3">Hello!</h1>
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center px-3">Hello!</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6"><a href="/gamelist" class="btn btn-primary w-100">Show all available games</a></div>
+        <div class="col-6"><a href="/statistics" class="btn btn-primary w-100">Show player statistics</a></div>
+    </div>
 {% endblock %}

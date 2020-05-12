@@ -1,3 +1,5 @@
+import json
+
 from flask import jsonify
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required,
                                 get_jwt_identity, get_raw_jwt, set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
@@ -79,7 +81,7 @@ class TokenRefresh(Resource):
         return resp
 
 
-class GameListResource(Resource):
+class GameDetailsResource(Resource):
     @jwt_required
     def get(self, game_id):
         return GameModel.serialize([GameModel.find_by_id(game_id)])
@@ -135,3 +137,30 @@ class GameStartResource(Resource):
             )
             game.save_to_db()
         return ScoreboardEntryModel.serialize(ScoreboardEntryModel.filter_by_user(username))
+
+
+class StatisticsResource(Resource):
+    def get(self):
+        import datetime as dt
+        out_entries = []
+        scoreboard = ScoreboardEntryModel.get_all_entries()
+        for sbentry in scoreboard:
+            user = UserModel.find_by_id(sbentry.user_id)
+            game = GameModel.find_by_id(sbentry.game_id)
+            elapsed_seconds = (sbentry.time_end - sbentry.time_begin).total_seconds() \
+                if sbentry.time_end else (dt.datetime.now() - sbentry.time_begin).total_seconds()
+            entry = {
+                "username": user.username,
+                "game": game.title,
+                "current_riddle": sbentry.current_riddle,
+                "finished": sbentry.finished,
+                "time_begin": int(sbentry.time_begin.timestamp() * 1000),
+                "elapsed_seconds": elapsed_seconds
+            }
+            out_entries.append(entry)
+        return {"entries": out_entries}
+
+
+class AllGamesResource(Resource):
+    def get(self):
+        return GameModel.return_all()

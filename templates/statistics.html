@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Statistics{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Game</th>
+                    <th>Play time</th>
+                </tr>
+                </thead>
+                <tbody id="stat-details">
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        window.addEventListener("DOMContentLoaded", function () {
+            getStatistics();
+        }, false);
+    </script>
+{% endblock %}
