@@ -35,6 +35,8 @@ api.add_resource(resources.GameStartResource, '/mygames/<int:game_id>/start')
 api.add_resource(resources.GameAdvancementResource, '/mygames/<int:game_id>/advance')
 api.add_resource(resources.StatisticsResource, '/stats')
 api.add_resource(resources.AllGamesResource, '/games')
+api.add_resource(resources.GameCreationResource, '/games/create')
+api.add_resource(resources.RiddleCreationResource, '/games/<int:game_id>/riddles/add')
 
 
 @app.before_first_request
@@ -46,6 +48,12 @@ def init():
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
     return models.RevokedTokenModel.is_jti_blacklisted(jti)
+
+
+@jwt.user_claims_loader
+def add_claims_to_access_token(identity):
+    user = models.UserModel.find_by_username(identity)
+    return {"admin": user.isadmin if user.isadmin is not None else False}
 
 
 if __name__ == '__main__':

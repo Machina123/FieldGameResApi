@@ -1,8 +1,8 @@
-import json
-
 from flask import jsonify
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required,
-                                get_jwt_identity, get_raw_jwt, set_access_cookies, set_refresh_cookies, unset_jwt_cookies)
+                                get_jwt_identity, get_raw_jwt, set_access_cookies, set_refresh_cookies,
+                                unset_jwt_cookies,
+                                get_jwt_claims)
 from flask_restful import Resource, reqparse
 
 from app import db
@@ -11,6 +11,20 @@ from models import UserModel, RevokedTokenModel, GameModel, RiddleModel, Scorebo
 parser = reqparse.RequestParser()
 parser.add_argument('username', help='This field cannot be blank', required=True)
 parser.add_argument('password', help='This field cannot be blank', required=True)
+
+game_parser = reqparse.RequestParser()
+game_parser.add_argument('title', help='This field cannot be blank', required=True)
+game_parser.add_argument('description', help='This field cannot be blank', required=True)
+game_parser.add_argument('riddles', help='This field cannot be blank', required=True)
+
+riddle_parser = reqparse.RequestParser()
+riddle_parser.add_argument('game_id', help='This field cannot be blank', required=True)
+riddle_parser.add_argument('riddle_no', help='This field cannot be blank', required=True)
+riddle_parser.add_argument('latitude', help='This field cannot be blank', required=True)
+riddle_parser.add_argument('longitude', help='This field cannot be blank', required=True)
+riddle_parser.add_argument('description', help='This field cannot be blank', required=True)
+riddle_parser.add_argument('radius', help='This field cannot be blank', required=True)
+riddle_parser.add_argument('dominant_object', help='This field cannot be blank', required=True)
 
 
 class UserRegistration(Resource):
@@ -164,3 +178,41 @@ class StatisticsResource(Resource):
 class AllGamesResource(Resource):
     def get(self):
         return GameModel.return_all()
+
+
+class GameCreationResource(Resource):
+    @jwt_required
+    def put(self):
+        claims = get_jwt_claims()
+        if claims["admin"]:
+            data = game_parser.parse_args()
+            newgame = GameModel(
+                title=data["title"],
+                description=data["description"],
+                riddles=int(data["riddles"])
+            )
+            newgame.save_to_db()
+            return GameModel.serialize([newgame])
+        else:
+            return {"message": "Admin privileges are required to perform this action"}
+
+
+class RiddleCreationResource(Resource):
+    @jwt_required
+    def put(self, game_id):
+        claims = get_jwt_claims()
+        if claims["admin"]:
+            data = riddle_parser.parse_args()
+            newriddle = RiddleModel(
+                game_id=game_id,
+                riddle_no=int(data["riddle_no"]),
+                latitude=float(data["latitude"]),
+                longitude=float(data["longitude"]),
+                description=data["description"],
+                radius=int(data["radius"]),
+                dominant_object=data["dominant_object"]
+            )
+            newriddle.save_to_db()
+            return RiddleModel.serialize([newriddle])
+        else:
+            return {"message": "Admin privileges are required to perform this action"}
