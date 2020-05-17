@@ -1,3 +1,8 @@
+"""
+Główny moduł aplikacji serwerowej.
+
+Moduł odpowiada za konfigurację frameworka Flask oraz rozszerzeń Flask-Restful, Flask-SQLAlchemy i Flask-JWT-Extended.
+"""
 from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
@@ -41,17 +46,37 @@ api.add_resource(resources.RiddleCreationResource, '/games/<int:game_id>/riddles
 
 @app.before_first_request
 def init():
+    """
+    Metoda wykonywana przed przetworzeniem pierwszego zapytania.
+
+    Obecna implementacja tworzy bazę danych oraz tabele.
+    """
     db.create_all()
 
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
+    """
+    Metoda wykonywana podczas odczytywania "żetonu dostępowego" JWT (JSON Web Token).
+    Sprawdza, czy żeton nie został wpisany na czarną listę, tym samym czy nie został unieważniony
+
+    :param decrypted_token: Odszyfrowany żeton JWT
+    :return: Informacja z bazy danych, czy "żeton" jest unieważniony (True/False)
+    """
     jti = decrypted_token['jti']
     return models.RevokedTokenModel.is_jti_blacklisted(jti)
 
 
 @jwt.user_claims_loader
 def add_claims_to_access_token(identity):
+    """
+    Metoda wywoływana podczas tworzenia bądź odświeżania żetonu JWT (JSON Web Token).
+
+    Dodaje informację, czy użytkownik posiada prawa administracyjne w aplikacji
+
+    :param identity: Tożsamość użytkownika zaszyta w żetonie JWT
+    :return: Informacja o posiadaniu (bądź nie) praw administratora aplikacji
+    """
     user = models.UserModel.find_by_username(identity)
     return {"admin": user.isadmin if user.isadmin is not None else False}
 

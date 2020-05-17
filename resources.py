@@ -1,3 +1,6 @@
+"""
+Moduł zawierający zasoby interfejsu API aplikacji
+"""
 from flask import jsonify
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required,
                                 get_jwt_identity, get_raw_jwt, set_access_cookies, set_refresh_cookies,
@@ -28,6 +31,11 @@ riddle_parser.add_argument('dominant_object', help='This field cannot be blank',
 
 
 class UserRegistration(Resource):
+    """
+    Zasób odpowiadający za zarejestrowanie użytkownika.
+
+    Udziela odpowiedzi tylko na zapytania wysłąne metodą POST.
+    """
     def post(self):
         data = parser.parse_args()
 
@@ -48,6 +56,11 @@ class UserRegistration(Resource):
 
 
 class UserLogin(Resource):
+    """
+    Zasób odpowiadający za zalogowanie użytkownika i przydzielenie mu żetonu dostępowego JWT (JSON Web Token).
+
+    Udziela odpowiedzi na zapytania wysłane metodą POST.
+    """
     def post(self):
         data = parser.parse_args()
         current_user = UserModel.find_by_username(data['username'])
@@ -71,6 +84,11 @@ class UserLogin(Resource):
 
 
 class UserLogout(Resource):
+    """
+    Zasób odpowiadający za wylogowanie użytkownika i unieważnienie żetonu dostępowego JWT (JSON Web Token).
+
+    Udziela odpowiedzi na zapytania wysłane metodą POST zawierające "ciasteczko" z żetonem JWT.
+    """
     @jwt_refresh_token_required
     def post(self):
         jti = get_raw_jwt()['jti']
@@ -86,6 +104,11 @@ class UserLogout(Resource):
 
 
 class TokenRefresh(Resource):
+    """
+    Zasob odpowiadający za odświeżenie żetonu JWT (JSON Web Token).
+
+    Udziela odpowiedzi na zapytania wysłane metodą POST zawierające "ciasteczko" z żetonem JWT.
+    """
     @jwt_refresh_token_required
     def post(self):
         current_user = get_jwt_identity()
@@ -96,18 +119,33 @@ class TokenRefresh(Resource):
 
 
 class GameDetailsResource(Resource):
+    """
+    Zasób odpowiadający za wyświetlenie szczegółów dotyczących wybranej gry
+
+    Udziela odpowiedzi na zapytania wysłane metodą GET zawierające "ciasteczko" z żetonem JWT.
+    """
     @jwt_required
     def get(self, game_id):
         return GameModel.serialize([GameModel.find_by_id(game_id)])
 
 
 class RiddleListResource(Resource):
+    """
+    Zasób odpowiadający za wyświetlenie zagadek powiązanych z wybraną grą
+
+    Udziela odpowiedzi na zapytania wysłane metodą GET zawierające "ciasteczko" z żetonem JWT.
+    """
     @jwt_required
     def get(self, game_id):
         return RiddleModel.print_riddles_for_game(game_id)
 
 
 class UserGamesStatusResource(Resource):
+    """
+    Zasób odpowiadający za wyświetlenie postępu aktualnie zalogowanego użytkownika we wszystkich grach
+
+    Udziela odpowiedzi na zapytania wysłane metodą GET zawierające "ciasteczko" z żetonem JWT.
+    """
     @jwt_required
     def get(self):
         current_user = get_jwt_identity()
@@ -115,6 +153,11 @@ class UserGamesStatusResource(Resource):
 
 
 class GameProgressResource(Resource):
+    """
+    Zasób odpowiadający za wyświetlenie postępu aktualnie zalogowanego użytkownika w wybranej grze
+
+    Udziela odpowiedzi na zapytania wysłane metodą GET zawierające "ciasteczko" z żetonem JWT.
+    """
     @jwt_required
     def get(self, game_id):
         current_user = get_jwt_identity()
@@ -122,6 +165,11 @@ class GameProgressResource(Resource):
 
 
 class GameAdvancementResource(Resource):
+    """
+    Zasób odpowiadający za aktualizację postępu aktualnie zalogowanego użytkownika we wskazanej grze
+
+    Udziela odpowiedzi na zapytania wysłane metodą POST zawierające "ciasteczko" z żetonem JWT.
+    """
     @jwt_required
     def post(self, game_id):
         import datetime as dt
@@ -138,6 +186,11 @@ class GameAdvancementResource(Resource):
 
 
 class GameStartResource(Resource):
+    """
+    Zasób odpowiadający za dołączenie aktualnie zalogowanego użytkownika do nowej gry
+
+    Udziela odpowiedzi na zapytania wysłane metodą POST zawierające "ciasteczko" z żetonem JWT.
+    """
     @jwt_required
     def post(self, game_id):
         username = get_jwt_identity()
@@ -154,6 +207,11 @@ class GameStartResource(Resource):
 
 
 class StatisticsResource(Resource):
+    """
+    Zasób odpowiadający za pobranie postępu wszystkich graczy we wszystkich grach.
+
+    Udziela odpowiedzi na zapytania wysłane metodą GET.
+    """
     def get(self):
         import datetime as dt
         out_entries = []
@@ -176,11 +234,21 @@ class StatisticsResource(Resource):
 
 
 class AllGamesResource(Resource):
+    """
+    Zasób odpowiadający za pobranie wszystkich dostępnych na serwerze gier.
+
+    Udziela odpowiedzi na zapytania wysłane metodą GET.
+    """
     def get(self):
         return GameModel.return_all()
 
 
 class GameCreationResource(Resource):
+    """
+    Zasób odpowiadający za dodanie nowej gry
+
+    Udziela odpowiedzi na zapytania wysłane metodą PUT. Wymaga posiadania praw administratora aplikacji.
+    """
     @jwt_required
     def put(self):
         claims = get_jwt_claims()
@@ -198,6 +266,11 @@ class GameCreationResource(Resource):
 
 
 class RiddleCreationResource(Resource):
+    """
+    Zasób odpowiadający za dodanie nowej zagadki.
+
+    Udziela odpowiedzi na zapytania wysłane metodą PUT. Wymaga posiadania praw administratora aplikacji.
+    """
     @jwt_required
     def put(self, game_id):
         claims = get_jwt_claims()

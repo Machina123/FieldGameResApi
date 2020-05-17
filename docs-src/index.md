@@ -1,3 +1,23 @@
+# FieldGameRestApi
+
+## Wstęp
+
+FieldGameRestApi to aplikacja serwerowa stworzona na potrzeby projektu [FieldGame](https://github.com/Machina123/FieldGame),
+czyli gry terenowej na system Android, tworzonej w ramach przedmiotu Projekt Inżynierski prowadzonego na Uniwersytecie 
+Pedagogicznym im. KEN w Krakowie.
+
+Aplikacja napisana jest w języku Python 3.7 z wykorzystaniem frameworka Flask oraz rozszerzeń Flask-Restful, 
+Flask-SQLAlchemy oraz Flask-JWT-Extended.
+
+Serwer WSGI *(Web Server Gateway Interface)* wykorzystywany do uruchomienia aplikacji to GUnicorn.
+
+## Spis treści
+* [Moduły](./modules/index.md)
+
+---
+ 
+## Licencja
+```text
 MIT License
 
 Copyright (c) 2020 Patryk Ciepiela, Bartłomiej Gil
@@ -19,3 +39,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
